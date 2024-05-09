@@ -2,17 +2,15 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:math="http://www.w3.org/2005/xpath-functions/math" exclude-result-prefixes="xs math"
+    xpath-default-namespace="http://www.tei-c.org/ns/1.0" xmlns="http://www.tei-c.org/ns/1.0"
     version="3.0">
     <xsl:mode on-no-match="shallow-copy"/>
-    <xsl:output method="xml" indent="yes"/>
-    
-    <xsl:mode name="delete" on-no-match="fail"/>
+    <xsl:output method="xml" indent="no"/>
 
-    <xsl:template match="TEI">
+<!--Crea archivos vacíos si el documento editado contiene menos de 5 tokes-->
+    <xsl:template match="/">
         <xsl:if test="count(descendant::tok) gt 5">
-            <TEI>
-                <xsl:apply-templates/>
-            </TEI>
+            <xsl:apply-templates/>
         </xsl:if>
     </xsl:template>
 
