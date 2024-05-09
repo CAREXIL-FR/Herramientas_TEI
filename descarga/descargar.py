@@ -1,25 +1,29 @@
-import wget
+import requests
 import os
+from datetime import datetime
+
+date = datetime.today().strftime('%Y-%m-%d')
 
 # Ruta al directorio en el que se descargarán los archivos
-dirSalida = 'xml'
+outDir = '../' + date
 
 # Fichero que contiene la lista de documentos que hay que descargar
-lista = 'archivos.txt'
+list = 'archivos.txt'
 
 #URL del proyecto
 urlBase =  'http://carexil.huma-num.fr'
 
-#tipo de documento a descargar. Valores posibles: 'tei' o 'raw'
-tipo = 'raw'
+#Tipo de documento a descargar. Valores posibles: 'tei' o 'raw'
+type = 'raw'
 
-if not os.path.exists(dirSalida):
-        os.mkdir(dirSalida)
+if not os.path.exists(outDir):
+        os.mkdir(outDir)
 
+f = open(list)
+files = f.readlines()
 
-f = open(lista)
-archivos = f.readlines()
-
-for doc in archivos:
-    url = urlBase + '/index.php?action=getxml&type=' + tipo + '&cid=' + doc
-    wget.download(url, 'xml')
+for file in files:
+    url = urlBase + '/index.php?action=getxml&type=' + type + '&cid=' + file
+    response = requests.get(url)
+    with open(os.path.join(outDir, file), 'wb') as f:
+    	f.write(response.content)
