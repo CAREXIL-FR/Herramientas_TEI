@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="all" basedir="." name="carexil">
+    <description>Descarga de los archivos TEITOK de la instancia definida en descarga/descargar.py y conversión de estos archivos en TEI P5.</description>
+    <tstamp>
+        <format property="TODAY"
+            pattern="yyyy-MM-dd"
+            locale="es,ES"/>
+    </tstamp>
+    
+    <property name="saxonJar" value="lib/saxon.jar"/>
+    <property name="p5.dir" value="${TODAY}_P5"/>
+    <property name="teitok.dir" value="${TODAY}"/>
+    
+    <target name="descarga" description="Descarga de los archivos de TEITOK">
+        <exec dir="descarga" executable="python3" failonerror="true">
+            <arg line="descargar.py"/>
+        </exec>
+    </target>
+    <target name="P5" description="Conversión a TEI P5">
+        <mkdir dir="${p5.dir}"/>
+        <replace dir="${teitok.dir}" token="xmlnsoff" value="xmlns"/>
+        <java fork="true" classname="net.sf.saxon.Transform" classpath="${saxonJar}" failonerror="false">
+            <arg value="-s:${teitok.dir}"/>
+            <arg value="-xsl:teitok-a-tei/teitok-a-tei.xsl"/>
+            <arg value="-o:${p5.dir}"/>
+            <arg value="--suppressXsltNamespaceCheck:on"/>
+            <arg value="-versionmsg:off"/>
+        </java>
+<!--        Borramos los archivos que no tienen texto editado -->
+        <exec executable="find">
+            <arg value="${p5.dir}"/>
+            <arg value="-type"/>
+            <arg value="f"/>
+            <arg value="-size"/>
+            <arg value="-500c"/>
+            <arg value="-delete"/>
+        </exec>
+    </target>
+    <target name="clean" description="Borra los directorios de entrada y salida">
+        <delete includeemptydirs="true" failonerror="false" dir="${p5.dir}"/>
+        <delete includeemptydirs="true" failonerror="false" dir="${teitok.dir}"/>
+    </target>
+    <target name="all" depends="descarga,P5"></target>
+</project>
