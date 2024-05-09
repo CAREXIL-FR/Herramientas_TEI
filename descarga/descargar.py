@@ -1,5 +1,5 @@
-import requests
 import os
+import requests
 from datetime import datetime
 
 date = datetime.today().strftime('%Y-%m-%d')
@@ -25,5 +25,5 @@ files = f.readlines()
 for file in files:
     url = urlBase + '/index.php?action=getxml&type=' + type + '&cid=' + file
     response = requests.get(url)
-    with open(os.path.join(outDir, file), 'wb') as f:
-    	f.write(response.content)
+    with open(os.path.join(outDir, file), 'wb') as doc:
+    	doc.write(response.content)
