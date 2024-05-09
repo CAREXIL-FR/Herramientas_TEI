@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:math="http://www.w3.org/2005/xpath-functions/math"
-    exclude-result-prefixes="xs math" version="3.0">
+    xmlns:math="http://www.w3.org/2005/xpath-functions/math" exclude-result-prefixes="xs math"
+    version="3.0">
     <xsl:mode on-no-match="shallow-copy"/>
     <xsl:output method="xml" indent="yes"/>
+    
+    <xsl:mode name="delete" on-no-match="fail"/>
 
-    <!-- Elementos que cuyo nombre comienza con “tei_” y que serían equivalentes 
+    <xsl:template match="TEI">
+        <xsl:if test="count(descendant::tok) gt 5">
+            <TEI>
+                <xsl:apply-templates/>
+            </TEI>
+        </xsl:if>
+    </xsl:template>
+
+    <!-- Elementos cuyo nombre comienza con “tei_” y que serían equivalentes 
     al elemento TEI correspondiente -->
     <xsl:template match="tei_address | tei_opener">
         <xsl:variable name="elementName" select="substring-after(name(), 'tei_')"/>
@@ -48,12 +58,16 @@
             </xsl:if>
             <xsl:choose>
                 <xsl:when test="dtok">
-                    <xsl:apply-templates select="dtok"></xsl:apply-templates>
+                    <xsl:apply-templates select="dtok"/>
                 </xsl:when>
                 <xsl:when test="@form ne .">
                     <choice>
-                        <orig><xsl:apply-templates/></orig>
-                        <reg><xsl:value-of select="@form"/></reg>
+                        <orig>
+                            <xsl:apply-templates/>
+                        </orig>
+                        <reg>
+                            <xsl:value-of select="@form"/>
+                        </reg>
                     </choice>
                 </xsl:when>
                 <xsl:when test="name() eq 'dtok'">
