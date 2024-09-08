@@ -20,7 +20,7 @@ if not os.path.exists(outDir):
         os.mkdir(outDir)
 
 f = open(list)
-files = f.readlines()
+files = f.read().splitlines()
 
 for file in files:
     url = urlBase + '/index.php?action=getxml&type=' + type + '&cid=' + file
